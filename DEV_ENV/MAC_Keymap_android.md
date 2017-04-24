@@ -43,7 +43,7 @@
  
 
 
-## keymap MAC Android Studio
+## keymap MAC Android Studio (Mac OS X 10.5+)
 
  快捷方式| 描述
  :---: | :---:
