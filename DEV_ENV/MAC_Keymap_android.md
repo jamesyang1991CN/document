@@ -24,7 +24,26 @@
  :---: | :---:
  command + G|查找后的目标的下一个位置 
  command + shift + G | 查找后目标的上一个位置
+ command + H | 隐藏最前面应用窗口
+ command + option + H | 除了最前面应用窗口 其他窗口全部隐藏
+ command + M | 最小化最前面应用窗口到dock
+ command + option + M | 最小化所有窗口到dock
+ command + N | 新建窗口
+ command + W | 关闭最应用最前面窗口
+ comand + option + W | 关闭应用的所有窗口
+ command + Q | 退出应用
+ command + option + esc | 强制关闭应用 选择
+ comamnd + shift + option + esc 3s| 强制关闭最前面应用
+ command + shift + 3 | 屏幕快照
+ comamnd + shift + 4 | 屏幕选择区域截屏
+ command + , | 大开最前面应用偏好设置
+ comamnd + control + 电源键 | 强制重启MAC
+ comamnd + shift + 电源键 | 睡眠
+ option + shift + command + Q | 注销账户
+ 
 
+
+ 
 
 
 
