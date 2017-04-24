@@ -59,7 +59,6 @@
  command + option + R | 继续运行程序	
  command + F8 | 切换断点	
  Command + Shift + F8 | 查看断点
-
  double shift | 全局搜索资源文件
  comamnd + 向下 | 查找源代码
  control + shift + H（自己设置） | 打开类型的层次结构
@@ -87,6 +86,7 @@
  tab / shift + tab | 缩进 或者取消缩进
  Fn + F5 | 复制类
  Fn + F6 | 移动函数
+
 
 
 
