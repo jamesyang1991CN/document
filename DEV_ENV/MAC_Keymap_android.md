@@ -49,7 +49,7 @@
  :---: | :---:
  command + 1 | 查看project 目录 
  control + R | run 应用
- control + option + command + D (自己设置)| debug  
+ control + option + command + D /option + D(自己设置)| debug  
  F8 | 跳过
  F7 | 逐步执行	
  shift + F7 | 智能逐步执行	
