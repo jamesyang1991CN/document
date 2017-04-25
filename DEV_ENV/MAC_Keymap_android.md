@@ -40,6 +40,7 @@
  comamnd + control + 电源键 | 强制重启MAC
  comamnd + shift + 电源键 | 睡眠
  option + shift + command + Q | 注销账户
+ command + R | 刷新
  
 
 
