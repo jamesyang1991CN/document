@@ -80,7 +80,7 @@
  control + option + /（自己设置） | 多行注释 多行取消注释
  option + up | 选择连续的代码块 
  option + down | 与up 相反
- option + [] | 移动光标到代码起始 和 末尾 位置
+ command + -> <-| 移动光标到代码起始 和 末尾 位置
  option + command + shift + [] | 选中光标到代码起始 或者 代码末尾 位置
  control + option + o | 优化导入
  comamnd + option + L | 重新格式化代码
