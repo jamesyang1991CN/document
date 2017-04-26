@@ -87,6 +87,7 @@
  tab / shift + tab | 缩进 或者取消缩进
  Fn + F5 | 复制类
  Fn + F6 | 移动函数
+ shift + R | 重命名文件
 
 
 
