@@ -38,7 +38,7 @@
  comamnd + shift + 4 | 屏幕选择区域截屏
  command + , | 大开最前面应用偏好设置
  comamnd + control + 电源键 | 强制重启MAC
- control + shift + 电源键 | 睡眠
+ comamnd + shift + 电源键 | 睡眠
  option + shift + command + Q | 注销账户
  command + R | 刷新
  
