@@ -76,6 +76,7 @@
  command + B | 转到申明
  command + U | 转到父类
  command + Y | 找到快速定义
+ command + B | 调用方法 类 参数
  control + /(自己设置)  | 注释 取消注释
  control + option + /（自己设置） | 多行注释 多行取消注释
  option + up | 选择连续的代码块 
