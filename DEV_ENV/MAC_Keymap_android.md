@@ -61,6 +61,7 @@
  command + F8 | 切换断点	
  Command + Shift + F8 | 查看断点
  double shift | 全局搜索资源文件
+ shift + command + R | java 类名搜索
  comamnd + 向下 | 查找源代码
  control + shift + H（自己设置） | 打开类型的层次结构
  command + shift + H | 打开方法的层次结构
@@ -77,18 +78,23 @@
  command + U | 转到父类
  command + Y | 找到快速定义
  command + B | 调用方法 类 参数
+ command + option + B | 寻找实现的类
  control + /(自己设置)  | 注释 取消注释
  control + option + /（自己设置） | 多行注释 多行取消注释
  option + up | 选择连续的代码块 
  option + down | 与up 相反
  command + -> <-| 移动光标到代码起始 和 末尾 位置
+ command + { } | 前进 后退 代码光标记录
  option + command + shift + [] | 选中光标到代码起始 或者 代码末尾 位置
  control + option + o | 优化导入
+ command + option + o | 根据类名 方法名 关键字 搜索
  comamnd + option + L | 重新格式化代码
  tab / shift + tab | 缩进 或者取消缩进
  Fn + F5 | 复制类
  Fn + F6 | 移动函数
  shift + R | 重命名文件
+ command + shift + F | 全局搜索关键字
+ control + command + F | 最大化／正常化界面
 
 
 
