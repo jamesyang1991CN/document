@@ -95,6 +95,7 @@
  shift + R | 重命名文件
  command + shift + F | 全局搜索关键字
  control + command + F | 最大化／正常化界面
+ command + fn + F12 | 搜索 方法在一个类中
 
 
 
