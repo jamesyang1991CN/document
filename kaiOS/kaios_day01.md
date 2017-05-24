@@ -9,7 +9,7 @@ kaios 系统是属于[FireFox OS][1]平台的系统，和android 系统对比，
 
 # kaios 结构
 
-![kaios structure](file:///Users/yangjian/Documents/document/494px-FirefoxOS_arch.png)
+![kaios structure](https://github.com/jamesyang1991CN/document/blob/master/picture/494px-FirefoxOS_arch.png)
 
 - 还是依赖linux 系统
 - 主要由四层 Application layer\Open Web Plantform Interfaces\infrastructure(基础结构)\Device's Operation System 构成
@@ -27,7 +27,16 @@ kaios 系统是属于[FireFox OS][1]平台的系统，和android 系统对比，
 
 - 目前ril层是我要研究的方向  在kaios 中不是特别成熟
 
+# debug kaios
 
+## 准备工具
+- ubuntu 配置 firfox and adb 配置
+- 安装 adb 
+- lsusb 查看手机ID 类似 1782:5d04 前面的是厂商编号 后面是产品编号 （拔 插手机，看出手机的ID）
+	- cd /etc/udev/rules.d/
+	- touch 51-android.rules
+	- 编辑内容 SUBSYSTEM=="usb",ATTRS(idVendor)=="1782",ATTRS(idProduct)=="5d04",MODE="0666"
+		- SUBSYSTEM biaoshi
 
 作者：贱贱的杨
 从此你们的路上不会孤单，还有贱贱的我
