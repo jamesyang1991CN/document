@@ -36,7 +36,31 @@ kaios 系统是属于[FireFox OS][1]平台的系统，和android 系统对比，
 	- cd /etc/udev/rules.d/
 	- touch 51-android.rules
 	- 编辑内容 SUBSYSTEM=="usb",ATTRS(idVendor)=="1782",ATTRS(idProduct)=="5d04",MODE="0666"
-		- SUBSYSTEM biaoshi
+		- SUBSYSTEM 是USB设备
+		- ATTRS(idVendor)描述厂商的id号
+		- ATTRS（idProduct）描述产品号
+		- MODE 是访问权限
+- 给文件设置权限
+	chmod a+r /etc/udev/rules.d/51-android.rules
+- 重启udev
+	/etc/init.d/udev restart
+- 增加adb_usb.ini写入厂商的id 0x1782
+- 重启adb adb kill-server adb start-server adb devices
+
+
+## webIDE
+- firefox 浏览器自带debug 工具类似DDMS developer - webIDE 
+- 选中需要debug的应用 ，选中debug的log信息一般全选，然后操作会打印一些操作app的log信息
+
+
+
+
+
+
+
+
+
+
 
 作者：贱贱的杨
 从此你们的路上不会孤单，还有贱贱的我
