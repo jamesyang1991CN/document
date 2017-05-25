@@ -71,5 +71,8 @@ window.addEventListener("load", function() {
 ```
 
 
+# new structure of kaios
+
+![kaios structure detail](https://github.com/jamesyang1991CN/document/blob/master/picture/kaios_structure.png)
 
 
