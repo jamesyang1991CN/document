@@ -13,4 +13,4 @@ ssh sdduser@172.16.17.24
 scp remote 文件 本地路径
 
 或者
-scp sdduser@172.16.17.24:远端文件 本地文件 
+scp -r sdduser@172.16.17.24:远端文件 本地文件 
