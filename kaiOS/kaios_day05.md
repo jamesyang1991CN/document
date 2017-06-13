@@ -29,7 +29,7 @@ var KeyboardView = {
       			...
         		'dialed_number': {
           			items: [{
-            			l10nId: 'tcl-call',
+            			l10nId: 'call',
             			method: function() {
               				self._makeCall(KeypadManager.phoneNumber());//打电话->
             			}
@@ -450,105 +450,7 @@ int RilSender::BlockingWrite(const void *buffer, size_t len) {
   return 0;
 }
 
-/*============= Implementation of Class RilSocket =============*/
 
-/**
- *
- */
-RilSocket::RilSocket(RIL* ril, const nsACString& name, bool useRilApi,
-    void (*dcCallback)(void*))
-    : mFd(-1),
-      mUseRilApi(useRilApi),
-      mName(name),
-      mDisconnectRunnable(new SocketDisconnectRunnable(ril, dcCallback)) {
-  // Create the RilReceiver runnable
-  mReceiver = new RilReceiver(ril, this);
-
-  RefPtr<nsRunnable> runnable = NS_NewRunnableMethod(mReceiver,
-      &RilReceiver::Run);//---> RilReceiver run
-
-  // Start the RilReceiver thread for this socket
-  NS_NewThread(getter_AddRefs(mThread), runnable);
-}
-
-/**
- * Connect to to rild socket and read data from the socket
- */
-void RilReceiver::Run() {
-  int retryCount = 0;
-  struct pollfd poll_rild_fd;
-  int rc = 0;
-  int ret = 0;
-  RecordStream *recordStream;
-  void *p_record;
-  size_t recordlen;
-
-  while(1) {
-    
-    // Try to connect to rild socket
-    for (;;) {
-
-      // Connect to rild socket
-      QRLOGV("[SUB%d] Connecting to socket %s", mRil->mClientId,
-          mSocket->GetName());
-      mSocket->mFd = socket_local_client(mSocket->GetName(),
-          ANDROID_SOCKET_NAMESPACE_RESERVED, SOCK_STREAM);//socket 文件 客户端已经建立
-    	...
-    }
-
-    QRLOGD("[SUB%d] Connected to socket %s", mRil->mClientId,
-        mSocket->GetName());
-    recordStream = record_stream_new(mSocket->mFd, MAX_COMMAND_BYTES);
-
-    // Poll the rild socket to see if there is data to be read
-    poll_rild_fd.fd = mSocket->mFd;
-    poll_rild_fd.events = POLLIN;
-    poll_rild_fd.revents = 0;
-
-    // Read while the socket is connected to rild
-    while (1) {
-      if (mShutdown) {
-        QRLOGW("RIL is shutting down; exiting RilReceiver thread for socket %s",
-            mSocket->GetName());
-        return;
-      }
-      // Poll socket for data availability
-      rc = poll(&poll_rild_fd, 1, -1);
-
-      if (poll_rild_fd.revents == POLLERR) {
-        QRLOGE("[SUB%d] Closing RIL socket %s: POLLERR", mRil->mClientId,
-            mSocket->GetName());
-        break;
-      }
-
-      
-
-      // Read data from the socket
-      for (;;) {
-        /* Loop until EAGAIN/EINTR, end of stream, or other error */
-        ret = record_stream_get_next(recordStream, &p_record, &recordlen);
-        if (ret == 0 && p_record == nullptr) {
-          break;
-        } else if (ret < 0) {
-          break;
-        } else if (ret == 0) { /* && p_record != nullptr */
-          if (recordlen > MAX_COMMAND_BYTES) {
-            QRLOGE("[SUB%d] Invalid recordlen (%d) on socket %s.",
-                mRil->mClientId, recordlen, mSocket->GetName());
-            ret = -1;
-            break;
-          } else {
-            RefPtr<nsRunnable> runnable = new ResponseRunnable(
-                mRil, mSocket, p_record, recordlen);
-            DispatchRunnable(runnable, mRil->mIsShuttingDown);
-            errno = 0;
-          }
-        }
-      }
-
-      
-  }
-}
 
 
 //socket 连接的文件
