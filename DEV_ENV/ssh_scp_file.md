@@ -14,3 +14,6 @@ scp remote 文件 本地路径
 
 或者
 scp -r sdduser@172.16.17.24:远端文件 本地文件 
+
+以上方法可能会出现失败，不拷贝，因此有一种异步方法拷贝，详见：
+例：rsync -P --rsh=ssh -r sdduser@172.16.20.218:/local/kaios/ /Volumes/kaios/
