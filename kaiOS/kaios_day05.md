@@ -459,6 +459,9 @@ NS_NAMED_LITERAL_CSTRING(RILD_SOCKET_NAME, "rild");
 NS_NAMED_LITERAL_CSTRING(RILD_OEM_SOCKET_NAME, "qmux_radio/rild_oem");
 NS_NAMED_LITERAL_CSTRING(IMS_SOCKET_NAME, "qmux_radio/rild_ims");
 ```
+- rild rild_oem rild_ims
+- 由于cs call 因此 使用rild_oem socket
+- 由于rild 部分没有 
 
 
 
