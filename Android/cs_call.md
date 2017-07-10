@@ -893,9 +893,160 @@ static int socket_write_all(JNIEnv *env, jobject object, int fd,
     return 0;
 }
 ```
-- 	由于代码时android原生 所以没有modem 部分有所缺失，暂时无法分析，后面继续分析 recvmsg 和kernel部分
+- 目前还没有完整的流程说明如何socket 通信 ，sendmsg 开始linux systemcall ，后面学习Linux内核会说明
+- bionic/bionic/libc/SYSCALLS.TXT
+```
+int           sendmsg(int, const struct msghdr*, unsigned int)  arm,arm64,mips,mips64,x86_64
+int           recvmsg(int, struct msghdr*, unsigned int)   arm,arm64,mips,mips64,x86_64
+```
+- 最后是和rild通信
+- hardware/hardware/ril/rild/rild.c
+- 犹豫init.rc 在开机时会启动rild 守护进程,启动socket 监听
+
+```cpp
+int main(int argc, char **argv) {
+    ... 
+
+    dlHandle = dlopen(rilLibPath, RTLD_NOW);//打开ril so包
+
+    ...
+
+    RIL_startEventLoop();//启动事件轮询
+    ...
+
+    funcs = rilInit(&s_rilEnv, argc, rilArgv);
+    
+
+    RIL_register(funcs);//注册ril
+
+    ...
+    
+}
+```
+- hardware/hardware/ril/libril/ril.cpp
+```cpp
+/**
+ * A write on the wakeup fd is done just to pop us out of select()
+ * We empty the buffer here and then ril_event will reset the timers on the
+ * way back down  唤醒进程结束 根据select 选择的socket 进行回调函数的处理
+ */
+static void processWakeupCallback(int fd, short flags, void *param) {
+    char buff[16];
+    int ret;
+
+    RLOGV("processWakeupCallback");
+
+    /* empty our wakeup socket out */
+    do {
+        ret = read(s_fdWakeupRead, &buff, sizeof(buff));
+    } while (ret > 0 || (ret < 0 && errno == EINTR));
+}
+
+static void *
+eventLoop(void *param) {
+    ...
+
+    ril_event_init();//初始化 
 
 
+    ril_event_set (&s_wakeupfd_event, s_fdWakeupRead, true,
+                processWakeupCallback, NULL);//注册进程唤醒消息回调   
+
+    // Only returns on error
+    ril_event_loop();//建立消息轮询队列
+
+
+    return NULL;
+}
+
+extern "C" void
+RIL_startEventLoop(void) {
+    /* spin up eventLoop thread and wait for it to get started */
+
+    int result = pthread_create(&s_tid_dispatch, &attr, eventLoop, NULL);//创建事件轮询
+    ...
+}
+extern "C" void
+RIL_register (const RIL_RadioFunctions *callbacks) {
+    ...
+    /* Initialize socket1 parameters */
+    s_ril_param_socket = {
+                        RIL_SOCKET_1,             /* socket_id */
+                        -1,                       /* fdListen */
+                        -1,                       /* fdCommand */
+                        PHONE_PROCESS,            /* processName */
+                        &s_commands_event,        /* commands_event */
+                        &s_listen_event,          /* listen_event */
+                        processCommandsCallback,  /* processCommandsCallback */
+                        NULL,                     /* p_rs */
+                        RIL_TELEPHONY_SOCKET      /* type */
+                        };
+
+...
+
+    // start listen socket1
+    startListen(RIL_SOCKET_1, &s_ril_param_socket);
+    ...
+
+}
+
+//startListener
+static void startListen(RIL_SOCKET_ID socket_id, SocketListenParam* socket_listen_p) {
+    ...
+    RLOGI("Start to listen %s", rilSocketIdToString(socket_id));
+
+    fdListen = android_get_control_socket(socket_name);//获取socket句柄
+    ...
+
+    ret = listen(fdListen, 4);
+
+    ...
+    socket_listen_p->fdListen = fdListen;
+
+    /* note: non-persistent so we can accept only one connection at a time */
+    ril_event_set (socket_listen_p->listen_event, fdListen, false,
+                listenCallback, socket_listen_p);
+    ...
+}
+
+
+```
+- hardware/hardware/ril/libril/ril_event.cpp
+
+```cpp
+// Initialize an event
+void ril_event_set(struct ril_event * ev, int fd, bool persist, ril_event_cb func, void * param)
+{
+    dlog("~~~~ ril_event_set %x ~~~~", (unsigned int)ev);
+    memset(ev, 0, sizeof(struct ril_event));
+    ev->fd = fd;
+    ev->index = -1;
+    ev->persist = persist;
+    ev->func = func;
+    ev->param = param;
+    fcntl(fd, F_SETFL, O_NONBLOCK);
+}
+
+// Initialize internal data structs
+void ril_event_init()
+{
+    MUTEX_INIT();
+
+    FD_ZERO(&readFds);
+    init_list(&timer_list);
+    init_list(&pending_list);
+    memset(watch_table, 0, sizeof(watch_table));
+}
+
+void ril_event_loop()
+{
+    ...
+    for (;;) {
+        ...
+        n = select(nfds, &rfds, NULL, NULL, ptv);// 选择socket
+    }
+}
+```
 
 
 
