@@ -2,17 +2,23 @@
 ## pjsip 介绍
 
 > 背景：
-> PJSIP 由英国Teluu团队主导开发，由Benny Prijono 创建，他的名字缩写pj，所以命名PJSIP
+> PJSIP 由英国Teluu团队主导开发，由Benny Prijono (本尼 普里约诺) 创建，他的名字缩写pj，所以命名PJSIP
  
 
 > 优点：
+
 > 可移植性强：可运行在windows、windowsmobile、linux、unix、MacOS、RTEMS、Symbian
+
 > 内存需求小：编译后只需要150k内存空间
+
 > 支持多种SIP功能以及扩展功能：支持多人会话、事件驱动框架、会话控制（presence）、即时信息、电话传输
+
 > 文档介绍：官网有教程可以学习
 
 > 缺点：
+
 > Demo代码之间关联比较紧密，在编译的时候，需要花费时间寻找依赖关系
+
 > 文档特别多，也容易理不清
 
 
