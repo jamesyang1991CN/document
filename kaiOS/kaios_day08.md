@@ -1,1 +1,0 @@
-# js 调用xpcom xpcom 是js编译而来
