@@ -26,14 +26,14 @@ int main(int argc, char const *argv[]) {
       /* code */
       write(STDOUT_FILENO,"receive from parent: ",21);
       write(STDOUT_FILENO,buf,n);
-      printf("%s\n", buf);
+      // printf("%s\n", buf);
       char *str = buf;
-      if (strcmp("q",str) == 0) { //功能暂时无效
-        /* code */
+    /*  if (strcmp("q",str) == 0) { //功能暂时无效
+         code
         printf("exit \n");
         exit(0);
 
-      }
+      }*/
     }
 
     if (n < 0 ) {
