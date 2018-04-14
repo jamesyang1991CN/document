@@ -37,17 +37,17 @@ printf("shmid %d\n", shmid);
 
 
 while(1){
-  printf("in while\n");
+  printf("in while \n");
 
   write(STDOUT_FILENO,shmbuf,1);
-
+  write(STDOUT_FILENO,"\n",1);
   sleep(3);
 
 
 }
 
 
-write(STDOUT_FILENO,"\n",1);
+
 
   exit(EXIT_SUCCESS);
 }
