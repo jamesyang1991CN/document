@@ -219,9 +219,210 @@ int main(int argc, char const *argv[]) {
 ![sharemomery](https://github.com/jamesyang1991CN/document/blob/master/picture/shm.png)
 
 
+**函数原型**
+
+ 创建共享内存
+
+```c
+#include <sys/shm.h>
+int shmget(key_t __key,size_t, __size,int _-shmflg);
+/*
+功能： 创建内存或者获取已创建的共享内存
+__key 标识共享内存
+__size 共享内存的长度
+__shmflg 标志  IPC_CREATE 共享内存在需要创建，反之获取共享内存
+*/
+
+```
+映射共享内存
+
+```c
+#include <sys/shm.h>
+void * shmat(int shmid ,const void *shmaddr,int shmflg);
+/*
+功能: 映射共享内存
+shmid 共享内存的id
+shmaddr 共享内存在本进程中的地址，一般填0 ，函数会返回内存地址
+shmflg 内存的操作模式，SHM_RDONLY 表示只读
+返回共享内存虚拟起始地址 可以直接进行读写操作
+*/
+```
+
+解除共享地址映射
+
+```c
+#include <sys/shm.h>
+int shmdt(const void * shmaddr);
+/*
+功能：断开共享内存的映射
+shmaddr 共享内存的本进程中的虚拟地址
+返回0 成功 反之-1 失败
+*/
+```
+
+删除共享内存
+
+```c
+#include <sys/shm.h>
+int shmctl(int __shmid,int __cmd,struct shmid_ds *buf);
+/*
+功能： 共享内存控制函数
+__shmid 共享内存的id
+__cmd 共享内存的操作
+buf 保存内存模式状态和访问权限的数据结构
+成功返回0 失败返回-1
+*/
+```
+
+**开发步骤**
+
+写进程
+1. shmget创建一个共享内存
+2. shmat 将共享内存映射到本进程获取本进程读进程的虚拟地址
+3. 根据获取共享内存的虚拟地址进行写数据
+
+读进程
+1. shmget创建一个共享内存
+2. shmat 将共享内存映射到本进程获取读进程的虚拟地址
+3. write 将获取的虚拟地址获取数据 打印出来
+
+**案例代码**
+
+写进程
+```c
+int main(int argc, char const *argv[]) {
+
+    int shmid;
+    char * shmbuf;//共享内存的虚拟地址起始地址
+
+    if ((shmid = shmget(888,BUFSZ,0666|IPC_CREAT) ) < 0) {
+      perror("shmget1");
+      exit(EXIT_FAILURE);
+    }
+
+    printf("shmid %d\n", shmid);
+
+    if ((shmbuf = shmat(shmid,0,0))< (char *)0) {
+      perror("shmat1");
+      exit(EXIT_FAILURE);
+    }
+    printf("shmbuf %s\n", shmbuf);
+
+     shmbuf[0] = 'd';
+
+   exit(EXIT_SUCCESS);
+}
+
+```
+
+上面写进程 通过shmbuf 代表数组首地址，通过对字符数组赋值写入共享内存
 
 
+读进程
+```c
+int main(int argc, char const *argv[]) {
 
+  int shmid;
+  char * shmbuf;
+
+
+  if ((shmid = shmget(888,BUFSZ,0666|IPC_CREAT))<0) {
+    perror("shmget read");
+    exit(EXIT_FAILURE);
+  }
+  printf("shmid %d\n", shmid);
+  if ((shmbuf = shmat(shmid,0,0))< (char *)0) {
+    perror("shmat read");
+    exit(EXIT_FAILURE);
+  }
+  printf("shmbuf %s\n", shmbuf);
+  write(STDOUT_FILENO,shmbuf,1);
+  write(STDOUT_FILENO,"\n",1);
+  exit(EXIT_SUCCESS);
+}
+
+```
+
+读进程通过获取shmbuf 共享内存首地址，显示在界面上
+
+**测试显示**
+
+![shmwr](https://github.com/jamesyang1991CN/document/blob/master/picture/shmwr.png)
+
+![shmrd](https://github.com/jamesyang1991CN/document/blob/master/picture/shmrd.png)
+
+
+## 信号量
+
+作用是为了保证 共享内存读取同步
+
+下面这个例子一下子就看出问题了，在大量数据读写的时候，会丢失数据
+
+**读进程**
+```c
+int main(int argc, char const *argv[]) {
+
+  int shmid;
+  char * shmbuf;
+  if ((shmid = shmget(888,BUFSZ,0666|IPC_CREAT))<0) {
+    perror("shmget read");
+    exit(EXIT_FAILURE);
+  }
+  printf("shmid %d\n", shmid);
+  if ((shmbuf = shmat(shmid,0,0))< (char *)0) {
+    perror("shmat read");
+    exit(EXIT_FAILURE);
+  }
+  printf("shmbuf %s\n", shmbuf);
+  while(1){
+    printf("in while\n");
+    write(STDOUT_FILENO,shmbuf,1);
+    write(STDOUT_FILENO,"\n",1);
+    sleep(3);
+  }
+
+  exit(EXIT_SUCCESS);
+}
+```
+**写进程**
+```c
+int main(int argc, char const *argv[]) {
+    int shmid;
+    char * shmbuf;//共享内存的虚拟地址起始地址
+    if ((shmid = shmget(888,BUFSZ,0666|IPC_CREAT) ) < 0) {
+      perror("shmget1");
+      exit(EXIT_FAILURE);
+    }
+    printf("shmid %d\n", shmid);
+    if ((shmbuf = shmat(shmid,0,0))< (char *)0) {
+      perror("shmat1");
+      exit(EXIT_FAILURE);
+    }
+    printf("shmbuf %s\n", shmbuf);
+   shmbuf[0] = 'a'-1;
+   int temp = 0;
+    while(1){
+      shmbuf[0] = shmbuf[0]+1;
+      printf("write # %d char : %c \n ",temp++,shmbuf[0]);
+      sleep(1);
+    }
+   exit(EXIT_SUCCESS);
+}
+
+```
+
+可以看出来这里的代码就是在写进程中变成循环 打印a b c d ..26个英文字母，频率是每隔1秒
+
+而读进程 每隔3秒读取数据 显示
+
+**直接测试**
+
+![shmwr](https://github.com/jamesyang1991CN/document/blob/master/picture/shmwr2.png)
+
+![shmrd](https://github.com/jamesyang1991CN/document/blob/master/picture/shmrd2.png)
+
+
+上面的测试案例，告诉我们如果没有同步，由于发送端和读取端因为读取间隔不一样造成数据丢失，模拟了系统繁忙情况，所以同步很重要信号量作用很大，保证了数据同步
 
 
 
